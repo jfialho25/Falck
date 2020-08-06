@@ -1,5 +1,5 @@
 {
-	"name": "AzureCustomers",
+	"name": "azureCustomers",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureImporters",

@@ -232,7 +232,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureCustomers",
+						"referenceName": "azureCustomers",
 						"type": "DatasetReference"
 					}
 				]
