@@ -167,13 +167,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "dimCustomers",
+						"referenceName": "sqlCustomers",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "Customers",
+						"referenceName": "blobCustomers",
 						"type": "DatasetReference"
 					}
 				]
