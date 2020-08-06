@@ -1,5 +1,5 @@
 {
-	"name": "dimCustomers",
+	"name": "sqlCustomers",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LocalSQLServer",
