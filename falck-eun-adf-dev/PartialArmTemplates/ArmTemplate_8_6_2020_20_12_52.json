@@ -6,503 +6,12 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "falck-eun-adf-dev"
-		},
-		"LocalSQLServer_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LocalSQLServer'"
-		},
-		"AzureBlobStorage1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
-		},
-		"AzureImporters_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureImporters'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/LocalSQLServer')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('LocalSQLServer_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntime2",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntime2')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntime2')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Customers')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Load Customer data",
-				"activities": [
-					{
-						"name": "Load Customers",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "Customer Key",
-											"type": "Int32",
-											"physicalType": "int"
-										},
-										"sink": {
-											"name": "Customer Key",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "WWI Customer ID",
-											"type": "Int32",
-											"physicalType": "int"
-										},
-										"sink": {
-											"name": "WWI Customer ID",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"name": "Customer",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "Customer",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Bill To Customer",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "Bill To Customer",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Category",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "Category",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Buying Group",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "Buying Group",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Primary Contact",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "Primary Contact",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Postal Code",
-											"type": "String",
-											"physicalType": "nvarchar"
-										},
-										"sink": {
-											"name": "Postal Code",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Valid From",
-											"type": "DateTime",
-											"physicalType": "datetime2"
-										},
-										"sink": {
-											"name": "Valid From",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "Valid To",
-											"type": "DateTime",
-											"physicalType": "datetime2"
-										},
-										"sink": {
-											"name": "Valid To",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "Lineage Key",
-											"type": "Int32",
-											"physicalType": "int"
-										},
-										"sink": {
-											"name": "Lineage Key",
-											"type": "Int32"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "sqlCustomers",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "blobCustomers",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "Save Customers",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Load Customers",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"wildcardFolderPath": "output",
-									"wildcardFileName": "*",
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "blobCustomers",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "azureCustomers",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/sqlCustomers')]",
-				"[concat(variables('factoryId'), '/datasets/blobCustomers')]",
-				"[concat(variables('factoryId'), '/datasets/azureCustomers')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/sqlCustomers')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LocalSQLServer",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "Customer Key",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "WWI Customer ID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Customer",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Bill To Customer",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Category",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Buying Group",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Primary Contact",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Postal Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Valid From",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "Valid To",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "Lineage Key",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "Dimension",
-					"table": "Customer"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LocalSQLServer')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/blobCustomers')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "output",
-						"container": "customers"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureImporters')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureImporters_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/azureCustomers')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureImporters",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Customer Key",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "WWI Customer ID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Customer",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Bill To Customer",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Category",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Buying Group",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Primary Contact",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Postal Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Valid From",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "Valid To",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "Lineage Key",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "Dimension",
-					"table": "Customer"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureImporters')]"
-			]
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Sales')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -785,15 +294,13 @@
 						"inputs": [
 							{
 								"referenceName": "sqlSales",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "blobSales",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -846,15 +353,13 @@
 						"inputs": [
 							{
 								"referenceName": "blobSales",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "azureSales",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					}
@@ -992,9 +497,7 @@
 					"table": "Sale"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LocalSQLServer')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/blobSales')]",
@@ -1020,9 +523,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/azureSales')]",
@@ -1149,9 +650,7 @@
 					"table": "Sale"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureImporters')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
