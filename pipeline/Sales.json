@@ -32,6 +32,7 @@
 						}
 					},
 					"enableStaging": false,
+					"parallelCopies": 10,
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
@@ -283,6 +284,65 @@
 				"outputs": [
 					{
 						"referenceName": "blobSales",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Save Sales",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load Sales",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "output",
+							"wildcardFileName": "*",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "blobSales",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "azureSales",
 						"type": "DatasetReference"
 					}
 				]
