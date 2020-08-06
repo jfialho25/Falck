@@ -5,8 +5,8 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=False;data source=192.168.43.101;initial catalog=WideWorldImportersDW;user id=sa",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiZGFhNmI1ZS0yYmFjLTQyNDEtYjk5Zi00Yjk2NTY1M2M2MTMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": "integrated security=False;data source=DESKTOP-M91PV2Q;initial catalog=WideWorldImportersDW;user id=sa",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJjZTM5NDI3Ny05N2Q2LTQ5NWUtYmUyNC0zZWI5ZDg1YjNjOTYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "integrationRuntime2",
